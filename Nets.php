@@ -2,7 +2,7 @@
 
 class Payment
 {
-  /**
+  	/**
 	 * Environment
 	 *
 	 * @var string
