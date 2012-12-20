@@ -75,10 +75,10 @@ class Payment
 	function perform_annul($transaction_id)
 	{
 		$params = array(
-			'MerchantId'				=>	$this->_merchant_id,
-			'token'						=>	$this->_merchant_token,
-			'transactionId'				=>	$transaction_id,
-			'operation'					=>	'ANNUL'
+			'MerchantId'		=>	$this->_merchant_id,
+			'token'				=>	$this->_merchant_token,
+			'transactionId'		=>	$transaction_id,
+			'operation'			=>	'ANNUL'
 		);
 	
 		return $this->_run_request($params, 'Process');
@@ -96,10 +96,10 @@ class Payment
 	function perform_auth($transaction_id)
 	{
 		$params = array(
-			'MerchantId'				=>	$this->_merchant_id,
-			'token'						=>	$this->_merchant_token,
-			'transactionId'				=>	$transaction_id,
-			'operation'					=>	'AUTH'
+			'MerchantId'		=>	$this->_merchant_id,
+			'token'				=>	$this->_merchant_token,
+			'transactionId'		=>	$transaction_id,
+			'operation'			=>	'AUTH'
 		);
 	
 		return $this->_run_request($params, 'Process');
@@ -118,11 +118,11 @@ class Payment
 	function perform_capture($transaction_id, $amount)
 	{
 		$params = array(
-			'MerchantId'				=>	$this->_merchant_id,
-			'token'						=>	$this->_merchant_token,
-			'transactionId'				=>	$transaction_id,
-			'amount'					=>	$amount,
-			'operation'					=>	'CAPTURE'
+			'MerchantId'		=>	$this->_merchant_id,
+			'token'				=>	$this->_merchant_token,
+			'transactionId'		=>	$transaction_id,
+			'amount'			=>	$amount,
+			'operation'			=>	'CAPTURE'
 		);
 	
 		return $this->_run_request($params, 'Process');
@@ -163,9 +163,9 @@ class Payment
 	function perform_query($transaction_id)
 	{
 		$params = array(
-			'MerchantId'				=>	$this->_merchant_id,
-			'token'						=>	$this->_merchant_token,
-			'transactionId'				=>	$transaction_id
+			'MerchantId'			=>	$this->_merchant_id,
+			'token'					=>	$this->_merchant_token,
+			'transactionId'			=>	$transaction_id
 		);
 	
 		return $this->_run_request($params, 'Query');
@@ -183,10 +183,10 @@ class Payment
 	function perform_sale($transaction_id)
 	{
 		$params = array(
-			'MerchantId'				=>	$this->_merchant_id,
-			'token'						=>	$this->_merchant_token,
-			'transactionId'				=>	$transaction_id,
-			'operation'					=>	'SALE'
+			'MerchantId'			=>	$this->_merchant_id,
+			'token'					=>	$this->_merchant_token,
+			'transactionId'			=>	$transaction_id,
+			'operation'				=>	'SALE'
 		);
 	
 		$result = $this->_run_request($params, 'Process');
