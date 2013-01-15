@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php
 
 class Payment
 {
@@ -59,7 +59,8 @@ class Payment
 	 */
 	function launch_terminal($transaction_id)
 	{
-		redirect('https://'.$this->_url.'/Terminal/default.aspx?merchantId='.$this->_merchant_id.'&transactionId='.$transaction_id);
+		    
+		header('location: ' . 'https://'.$this->_url.'/Terminal/default.aspx?merchantId='.$this->_merchant_id.'&transactionId='.$transaction_id);
 		return true;
 	}
 	
@@ -252,7 +253,6 @@ class Payment
 	}
 	
 	
-	
 	/**
 	 * Registers a new easypayment.
 	 *
@@ -281,6 +281,67 @@ class Payment
 		);
 	
 		return (!$result = $this->_run_request($params)) ? false : (string) $result->TransactionId;
+	}
+	
+	
+	
+	/**
+	 * Registers a new recurring payment
+	 *
+	 * @param int $order_id 
+	 * @param int $amount 
+	 * @param string $pan_hash 
+	 * @param string $expiry_date 
+	 * @return mixed bool string
+	 */
+	function register_new_recurring_payment($order_id, $amount, $redirect_url, $expiry_date)
+	{
+	    $expiry_date = date('Ymd', strtotime($expiry_date));
+	    
+	    $params = array(
+	       'serviceType'            =>  'B',
+	       'MerchantId'			    =>	$this->_merchant_id,
+		   'token'					=>	$this->_merchant_token,
+		   'orderNumber'            =>  $order_id,
+		   'transactionReconRef'	=>	$order_id,
+		   'currencyCode'			=>	'NOK',
+		   'amount'                 =>  $amount,
+		   'redirectUrl'			=>	urlencode($redirect_url),
+		   'recurringType'			=>	'R',
+		   'recurringFrequency'     =>  1,
+		   'recurringExpiryDate'    =>  $expiry_date
+	    );
+	    
+	    return (!$result = $this->_run_request($params)) ? false : (string) $result->TransactionId;
+	}
+	
+	
+	
+	
+	/**
+	 * Registers a new recurring payment
+	 *
+	 * @param int $order_id 
+	 * @param int $amount 
+	 * @param string $pan_hash 
+	 * @param string $expiry_date 
+	 * @return mixed bool string
+	 */
+	function register_recurring_payment($order_id, $amount, $pan_hash)
+	{	    
+	    $params = array(
+	       'serviceType'            =>  'C',
+	       'recurringType'          =>  'R',
+	       'MerchantId'			    =>	$this->_merchant_id,
+		   'token'					=>	$this->_merchant_token,
+		   'orderNumber'            =>  $order_id,
+		   'transactionReconRef'	=>	$order_id,
+		   'currencyCode'			=>	'NOK',
+		   'amount'                 =>  $amount,
+		   'panHash'				=>	urlencode($pan_hash)
+	    );
+	    
+	    return (!$result = $this->_run_request($params)) ? false : (string) $result->TransactionId;
 	}
 	
 	
@@ -315,10 +376,12 @@ class Payment
 	 * @return bool
 	 * @author Anthoni Giskegjerde
 	 */
-	function validate_response($transaction_id, $response_code)
+	function validate_response()
 	{
-		if(!$transaction_id || !$response_code) return false;
-		return ($response_code != 'OK') ? false : $transaction_id;
+	    if(!isset($_GET['transactionId']) || !isset($_GET['responseCode'])) return false;
+	    
+	    if($_GET['responseCode'] == 'Cancel') return 'cancel';
+		return ($_GET['responseCode'] != 'OK') ? false : $_GET['transactionId'];
 	}
 	
 	
@@ -368,7 +431,10 @@ class Payment
 		
 		$result = simplexml_load_string($response);
 		
-		if(!$result || isset($result->Error)) return false;
+		echo '<pre>';
+		print_r($result);
+		echo '</pre>';
+		exit();
 		
 		return $result;
 	}
@@ -390,8 +456,8 @@ class Payment
 		    default:
 			case 'localhost':
 			case 'development':
-				$this->_merchant_id = '123456';
-				$this->_merchant_token = urlencode('your_token');
+				$this->_merchant_id = '';
+				$this->_merchant_token = urlencode('');
 				$this->_url = 'epayment-test.bbs.no';
 				break;
 			
