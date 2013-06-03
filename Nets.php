@@ -35,6 +35,13 @@ class Payment
 	 * @var string
 	 */
 	private $_url;
+
+
+
+	/**
+	 * Show debug information.
+	 */
+	private $debug = true;
 	
 	
 	
@@ -376,12 +383,10 @@ class Payment
 	 * @return bool
 	 * @author Anthoni Giskegjerde
 	 */
-	function validate_response()
+	function validate_response($transaction_id, $response_code)
 	{
-	    if(!isset($_GET['transactionId']) || !isset($_GET['responseCode'])) return false;
-	    
-	    if($_GET['responseCode'] == 'Cancel') return 'cancel';
-		return ($_GET['responseCode'] != 'OK') ? false : $_GET['transactionId'];
+	    if($response_code == 'Cancel') return 'cancel';
+		return ($response_code != 'OK') ? false : $transaction_id;
 	}
 	
 	
@@ -431,10 +436,9 @@ class Payment
 		
 		$result = simplexml_load_string($response);
 		
-		echo '<pre>';
-		print_r($result);
-		echo '</pre>';
-		exit();
+		if(isset($result->Error) && $this->debug) {
+	    	die('Nets Error: ' . $result->Error->Message);
+	    }
 		
 		return $result;
 	}
